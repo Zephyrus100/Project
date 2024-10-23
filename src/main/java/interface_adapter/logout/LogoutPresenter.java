@@ -7,7 +7,6 @@ import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import use_case.logout.LogoutOutputBoundary;
 import use_case.logout.LogoutOutputData;
-import view.LoggedInView;
 
 /**
  * The Presenter for the Logout Use Case.
