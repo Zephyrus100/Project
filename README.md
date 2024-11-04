@@ -174,7 +174,7 @@ Your team should spend the rest of the lab working on your project blueprint.
 
 * * *
 
-# Project Blueprint
+# Project Blueprint DEMO
 
 Domain: Focus & Flow; Timed Task Setter
 Software Specification:
