@@ -43,6 +43,14 @@ import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import interface_adapter.local_timer.LocalTimerController;
+import interface_adapter.local_timer.LocalTimerPresenter;
+import interface_adapter.local_timer.LocalTimerViewModel;
+import use_case.local_timer.LocalTimerInteractor;
+import view.LocalTimerView;
+import entity.LocalTimerFactory;
+import use_case.local_timer.LocalTimerDataAccessInterface;
+import data_access.InMemoryLocalTimerDataAccess;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -118,7 +126,7 @@ public class AppBuilder {
      */
     public AppBuilder addLoggedInView() {
         loggedInViewModel = new LoggedInViewModel();
-        loggedInView = new LoggedInView(loggedInViewModel);
+        loggedInView = new LoggedInView(loggedInViewModel, viewManagerModel);
         cardPanel.add(loggedInView, loggedInView.getViewName());
         return this;
     }
@@ -183,6 +191,28 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         loggedInView.setLogoutController(logoutController);
+        return this;
+    }
+
+    /**
+     * Adds the Timer View to the application.
+     * @return this builder
+     */
+    public AppBuilder addTimerView() {
+        final LocalTimerViewModel timerViewModel = new LocalTimerViewModel();
+        final LocalTimerPresenter timerPresenter = new LocalTimerPresenter(timerViewModel);
+        final LocalTimerDataAccessInterface timerDataAccess = new InMemoryLocalTimerDataAccess();
+
+        final LocalTimerInteractor timerInteractor = new LocalTimerInteractor(
+                timerPresenter,
+                new LocalTimerFactory(),
+                timerDataAccess
+        );
+
+        final LocalTimerController timerController = new LocalTimerController(timerInteractor);
+        final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController);
+        cardPanel.add(timerView, timerView.getViewName());
+
         return this;
     }
 
