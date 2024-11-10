@@ -17,6 +17,7 @@ import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.logout.LogoutController;
+import interface_adapter.ViewManagerModel;
 
 /**
  * The View for when the user is logged into the program.
@@ -36,8 +37,13 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final JTextField passwordInputField = new JTextField(15);
     private final JButton changePassword;
 
-    public LoggedInView(LoggedInViewModel loggedInViewModel) {
+    private final JButton goToTimer;
+
+    private final ViewManagerModel viewManagerModel;
+
+    public LoggedInView(LoggedInViewModel loggedInViewModel, ViewManagerModel viewManagerModel) {
         this.loggedInViewModel = loggedInViewModel;
+        this.viewManagerModel = viewManagerModel;
         this.loggedInViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel("Logged In Screen");
@@ -55,6 +61,9 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         changePassword = new JButton("Change Password");
         buttons.add(changePassword);
+
+        goToTimer = new JButton("Go to Timer");
+        buttons.add(goToTimer);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -105,6 +114,13 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                     }
                 }
         );
+
+        goToTimer.addActionListener(evt -> {
+            if (evt.getSource().equals(goToTimer)) {
+                viewManagerModel.setState("local timer");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
 
         this.add(title);
         this.add(usernameInfo);
