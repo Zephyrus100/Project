@@ -6,23 +6,32 @@ package use_case.enter_task;
 public class EnterTaskOutputData {
 
     private String taskTitle;
-    private boolean taskCompleted;
+    private String taskStatus;  // Changed to taskStatus to match the field purpose
     private String taskDescription;
-    private double tasktime;
+    private double taskTime;  // Fixed naming consistency for taskTime
 
-    public EnterTaskOutputData(String taskTitle, String taskDescription, double tasktime) {
+    // Constructor
+    public EnterTaskOutputData(String taskTitle, String taskDescription, double taskTime, String taskStatus) {
         this.taskTitle = taskTitle;
-        this.taskCompleted = false;
+        this.taskStatus = taskStatus != null ? taskStatus : "Uncompleted";  // Default to "Uncompleted" if null
         this.taskDescription = taskDescription;
-        this.tasktime = tasktime;
+        this.taskTime = taskTime;
     }
 
-    String getTaskTitle() {
+    // Getter methods
+    public String getTaskTitle() {
         return taskTitle;
     }
 
-    boolean getTaskCompleted() {
-        return taskCompleted;
+    public String getTaskStatus() {
+        return taskStatus;  // Get the task status
     }
 
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public double getTaskTime() {
+        return taskTime;  // Fixed variable name to match the field
+    }
 }

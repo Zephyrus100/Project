@@ -17,7 +17,7 @@ public class EnterTaskInputData {
         this.status = "Uncompleted";
     }
 
-    String getTaskName() {
+    public String getTaskName() {
         return taskName;
     }
 
