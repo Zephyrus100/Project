@@ -8,12 +8,18 @@ public interface EnterTaskOutputBoundary {
     /**
      * Prepare successful view of the task, correctly added.
      * @param addTaskData the data that will be passed onto the presenter.
+     * @return True if the task was successfully added.
      */
-    void prepareTaskAddedView(EnterTaskOutputData addTaskData);
+    boolean prepareTaskAddedView(EnterTaskOutputData addTaskData);
 
     /**
      * Prepare unsuccessful view of the task, not being added.
-     * @param errorMessage the error message received by the user.
      */
-    void prepareTaskNotAddedView(String errorMessage);
+    void prepareTaskNotAddedView();
+
+    /**
+     * Returns if the task was successfully added.
+     * @return true if added.
+     */
+    boolean taskAdded();
 }
