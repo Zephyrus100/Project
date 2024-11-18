@@ -13,6 +13,10 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.home.HomeController;
+import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeState;
+import interface_adapter.home.HomeViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -24,6 +28,7 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.home.HomeInputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -33,10 +38,19 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import view.HomeView;
 import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import interface_adapter.local_timer.LocalTimerController;
+import interface_adapter.local_timer.LocalTimerPresenter;
+import interface_adapter.local_timer.LocalTimerViewModel;
+import use_case.local_timer.LocalTimerInteractor;
+import view.LocalTimerView;
+import entity.LocalTimerFactory;
+import use_case.local_timer.LocalTimerDataAccessInterface;
+import data_access.InMemoryLocalTimerDataAccess;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -66,9 +80,22 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private HomeViewModel homeViewModel;
+    private HomeView homeView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
+    }
+
+    /**
+     * Adds the Home View to the application.
+     * @return this builder
+     */
+    public AppBuilder addHomeView() {
+        homeViewModel = new HomeViewModel();
+        homeView = new HomeView(homeViewModel);
+        cardPanel.add(homeView, homeView.getViewName());
+        return this;
     }
 
     /**
@@ -99,7 +126,7 @@ public class AppBuilder {
      */
     public AppBuilder addLoggedInView() {
         loggedInViewModel = new LoggedInViewModel();
-        loggedInView = new LoggedInView(loggedInViewModel);
+        loggedInView = new LoggedInView(loggedInViewModel, viewManagerModel);
         cardPanel.add(loggedInView, loggedInView.getViewName());
         return this;
     }
@@ -168,6 +195,28 @@ public class AppBuilder {
     }
 
     /**
+     * Adds the Timer View to the application.
+     * @return this builder
+     */
+    public AppBuilder addTimerView() {
+        final LocalTimerViewModel timerViewModel = new LocalTimerViewModel();
+        final LocalTimerPresenter timerPresenter = new LocalTimerPresenter(timerViewModel);
+        final LocalTimerDataAccessInterface timerDataAccess = new InMemoryLocalTimerDataAccess();
+
+        final LocalTimerInteractor timerInteractor = new LocalTimerInteractor(
+                timerPresenter,
+                new LocalTimerFactory(),
+                timerDataAccess
+        );
+
+        final LocalTimerController timerController = new LocalTimerController(timerInteractor);
+        final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController);
+        cardPanel.add(timerView, timerView.getViewName());
+
+        return this;
+    }
+
+    /**
      * Creates the JFrame for the application and initially sets the SignupView to be displayed.
      * @return the application
      */
@@ -177,6 +226,7 @@ public class AppBuilder {
 
         application.add(cardPanel);
 
+        // Change to homeView.getViewName() when done.
         viewManagerModel.setState(signupView.getViewName());
         viewManagerModel.firePropertyChanged();
 
