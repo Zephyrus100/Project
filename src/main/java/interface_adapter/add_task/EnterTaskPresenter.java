@@ -3,47 +3,56 @@ package interface_adapter. add_task;
 import use_case.enter_task.EnterTaskOutputBoundary;
 import use_case.enter_task.EnterTaskOutputData;
 import interface_adapter.ViewManagerModel;
-import view.TaskEnteredView;
 
 public class EnterTaskPresenter implements EnterTaskOutputBoundary {
 
-    private final EnterTaskState currentState;
     private final EnterTaskViewModel enterTaskViewModel;
+    private final TaskEnteredViewModel taskEnteredViewModel;
     private final ViewManagerModel viewManagerModel;
-    private TaskEnteredView taskEnteredView;
 
-    public EnterTaskPresenter(EnterTaskState enterTaskState, EnterTaskViewModel enterTaskViewModel,
-                              ViewManagerModel viewManagerModel, TaskEnteredView taskEnteredView) {
-        this.currentState = enterTaskState;
+    public EnterTaskPresenter(EnterTaskViewModel enterTaskViewModel, TaskEnteredViewModel taskEnteredViewModel,
+                              ViewManagerModel viewManagerModel) {
         this.enterTaskViewModel = enterTaskViewModel;
+        this.taskEnteredViewModel = taskEnteredViewModel;
         this.viewManagerModel = viewManagerModel;
-        this.taskEnteredView = taskEnteredView;
     }
 
     @Override
     public boolean prepareTaskAddedView(EnterTaskOutputData response) {
+        System.out.println("Presenter: prepareTaskAddedView called");
         if (response == null) {
+            System.out.println("Presenter: Response is null");
             return false;
         }
-        this.currentState.setTaskName(response.getTaskTitle());
-        this.currentState.setTaskDescription(response.getTaskDescription());
-        this.currentState.setTaskTime(response.getTaskTime());
-        this.currentState.setTaskStatus(response.getTaskStatus());
 
-        this.viewManagerModel.setState(enterTaskViewModel.getViewName());
+        System.out.println("Presenter: Response details:");
+        System.out.println("Task Title: " + response.getTaskTitle());
+        System.out.println("Task Description: " + response.getTaskDescription());
+        System.out.println("Task Time: " + response.getTaskTime());
+
+        final TaskEnteredState taskEnteredState = taskEnteredViewModel.getState();
+        taskEnteredState.setTaskName(response.getTaskTitle());
+        taskEnteredState.setTaskDescription(response.getTaskDescription());
+        taskEnteredState.setTaskTime(response.getTaskTime());
+
+        System.out.println("Presenter: State after setting:");
+        System.out.println("State Task Name: " + taskEnteredState.getTaskName());
+        System.out.println("State Task Description: " + taskEnteredState.getTaskDescription());
+        System.out.println("State Task Time: " + taskEnteredState.getTaskTime());
+
+        taskEnteredViewModel.setState(taskEnteredState);
+        taskEnteredViewModel.firePropertyChanged();
+
+        this.viewManagerModel.setState(taskEnteredViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();
 
-        this.enterTaskViewModel.setState(this.currentState);
         return true;
     }
-
     @Override
-    public void prepareTaskNotAddedView() {
-
-    }
-
-    @Override
-    public boolean taskAdded() {
-        return currentState.getTaskTime() > 0;
+    public void prepareTaskNotAddedView(String error) {
+        final EnterTaskState enterTaskState = new EnterTaskState();
+        enterTaskState.setEnterTaskError(error);
+        enterTaskViewModel.setState(enterTaskState);
+        enterTaskViewModel.firePropertyChanged(); // Notify listeners
     }
 }
