@@ -11,7 +11,8 @@ public class EnterTaskController {
         this.enterTaskInteractor = enterTaskInteractor;
     }
 
-    public void addTask(EnterTaskInputData enterTaskInputData) {
+    public void addTask(String taskName, String description, double taskTime) {
+        final EnterTaskInputData enterTaskInputData = new EnterTaskInputData(taskName, description, taskTime);
         enterTaskInteractor.addTask(enterTaskInputData);
     }
 }

@@ -15,11 +15,6 @@ public interface EnterTaskOutputBoundary {
     /**
      * Prepare unsuccessful view of the task, not being added.
      */
-    void prepareTaskNotAddedView();
+    void prepareTaskNotAddedView(String error);
 
-    /**
-     * Returns if the task was successfully added.
-     * @return true if added.
-     */
-    boolean taskAdded();
 }

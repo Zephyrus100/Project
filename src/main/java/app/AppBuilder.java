@@ -10,6 +10,10 @@ import data_access.InMemoryUserDataAccessObject;
 import entity.CommonUserFactory;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.add_task.EnterTaskController;
+import interface_adapter.add_task.EnterTaskPresenter;
+import interface_adapter.add_task.EnterTaskViewModel;
+import interface_adapter.add_task.TaskEnteredViewModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
@@ -28,6 +32,10 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.enter_task.EnterTaskInputBoundary;
+import use_case.enter_task.EnterTaskInteractor;
+import use_case.enter_task.EnterTaskOutputBoundary;
+import use_case.enter_task.InMemoryTaskData;
 import use_case.home.HomeInputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
@@ -38,16 +46,11 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.HomeView;
-import view.LoggedInView;
-import view.LoginView;
-import view.SignupView;
-import view.ViewManager;
+import view.*;
 import interface_adapter.local_timer.LocalTimerController;
 import interface_adapter.local_timer.LocalTimerPresenter;
 import interface_adapter.local_timer.LocalTimerViewModel;
 import use_case.local_timer.LocalTimerInteractor;
-import view.LocalTimerView;
 import entity.LocalTimerFactory;
 import use_case.local_timer.LocalTimerDataAccessInterface;
 import data_access.InMemoryLocalTimerDataAccess;
@@ -74,6 +77,8 @@ public class AppBuilder {
     // thought question: is the hard dependency below a problem?
     private final InMemoryUserDataAccessObject userDataAccessObject = new InMemoryUserDataAccessObject();
 
+    private InMemoryTaskData inMemoryTaskData = new InMemoryTaskData();
+
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
@@ -82,6 +87,10 @@ public class AppBuilder {
     private LoginView loginView;
     private HomeViewModel homeViewModel;
     private HomeView homeView;
+    private EnterTaskView enterTaskView;
+    private EnterTaskViewModel enterTaskViewModel;
+    private TaskEnteredViewModel taskEnteredViewModel;
+    private TaskEnteredView taskEnteredView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -117,6 +126,20 @@ public class AppBuilder {
         loginViewModel = new LoginViewModel();
         loginView = new LoginView(loginViewModel);
         cardPanel.add(loginView, loginView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addEnterTaskView() {
+        enterTaskViewModel = new EnterTaskViewModel();
+        enterTaskView = new EnterTaskView(enterTaskViewModel);
+        cardPanel.add(enterTaskView, enterTaskView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addTaskEnteredView() {
+        taskEnteredViewModel = new TaskEnteredViewModel();
+        taskEnteredView = new TaskEnteredView(taskEnteredViewModel, viewManagerModel);
+        cardPanel.add(taskEnteredView, taskEnteredViewModel.getViewName());
         return this;
     }
 
@@ -194,6 +217,17 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addEnterTaskUseCase() {
+        final EnterTaskOutputBoundary enterTaskOutputBoundary = new EnterTaskPresenter(enterTaskViewModel,
+                taskEnteredViewModel, viewManagerModel);
+
+        final EnterTaskInputBoundary enterTaskInteractor = new EnterTaskInteractor(inMemoryTaskData, enterTaskOutputBoundary);
+
+        final EnterTaskController enterTaskController = new EnterTaskController(enterTaskInteractor);
+        enterTaskView.setEnterTaskController(enterTaskController);
+        return this;
+    }
+
     /**
      * Adds the Timer View to the application.
      * @return this builder
@@ -221,15 +255,15 @@ public class AppBuilder {
      * @return the application
      */
     public JFrame build() {
-        final JFrame application = new JFrame("Login Example");
+        final JFrame application = new JFrame("Enter Task Example");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);
 
-        // Change to homeView.getViewName() when done.
-        viewManagerModel.setState(signupView.getViewName());
-        viewManagerModel.firePropertyChanged();
+        // Ensure the correct initial view is set here:
+        cardLayout.show(cardPanel, enterTaskView.getViewName());  // Ensure this points to the Enter Task View
 
         return application;
     }
+
 }

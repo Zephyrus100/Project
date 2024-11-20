@@ -1,30 +1,37 @@
 package app;
 
-import javax.swing.JFrame;
+import app.AppBuilder;
 
-/**
- * The Main class of our application.
- */
+import javax.swing.*;
+
 public class Main {
-    /**
-     * Builds and runs the CA architecture of the application.
-     * @param args unused arguments
-     */
     public static void main(String[] args) {
-        final AppBuilder appBuilder = new AppBuilder();
-        final JFrame application = appBuilder
-                                            .addHomeView()
-                                            .addLoginView()
-                                            .addSignupView()
-                                            .addLoggedInView()
-                                            .addTimerView()
-                                            .addSignupUseCase()
-                                            .addLoginUseCase()
-                                            .addLogoutUseCase()
-                                            .addChangePasswordUseCase()
-                                            .build();
+        AppBuilder appBuilder = new AppBuilder();
 
-        application.pack();
-        application.setVisible(true);
+        // Add necessary views
+        appBuilder
+                .addSignupView()
+                .addLoginView()
+                .addHomeView()
+                .addEnterTaskView()
+                .addTaskEnteredView()
+                .addLoggedInView()
+                .addTimerView()
+                .addEnterTaskView()
+                .addTaskEnteredView();
+
+        // Add necessary use cases
+        appBuilder
+                .addSignupUseCase()
+                .addLoginUseCase()
+                .addEnterTaskUseCase()
+                .addChangePasswordUseCase()
+                .addLogoutUseCase()
+                .addEnterTaskUseCase();
+
+        // Build and display the application
+        JFrame appFrame = appBuilder.build();
+        appFrame.setSize(500, 500); // Adjust size as needed
+        appFrame.setVisible(true);
     }
 }
