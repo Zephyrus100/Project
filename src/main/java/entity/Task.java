@@ -5,13 +5,13 @@ package entity;
  */
 public class Task implements TaskInterface {
 
-    private double time;
+    private TimerSession timer;
     private String status;
     private String title;
     private String description;
 
-    public Task(double time, String status, String title, String description) {
-        this.time = time;
+    public Task(TimerSession timer, String status, String title, String description) {
+        this.timer = timer;
         this.status = status;
         this.title = title;
         this.description = description;
@@ -34,6 +34,6 @@ public class Task implements TaskInterface {
 
     @Override
     public double getTaskTime() {
-        return time;
+        return timer.getDuration() ;
     }
 }
