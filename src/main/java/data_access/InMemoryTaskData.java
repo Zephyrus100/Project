@@ -1,7 +1,8 @@
-package use_case.enter_task;
+package data_access;
 
 import java.util.HashMap;
 import java.util.Map;
+import use_case.enter_task.EnterTaskDataInterface;
 
 public class InMemoryTaskData implements EnterTaskDataInterface {
 
