@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.home.HomeController;
 import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
@@ -26,8 +27,13 @@ public class HomeView extends JPanel implements ActionListener {
     private final JButton toNewTask;
     private final JButton toCurrTasks;
 
-    public HomeView(HomeViewModel homeViewModel) {
+    private final JButton goToTimer;
+
+    private final ViewManagerModel viewManagerModel;
+
+    public HomeView(HomeViewModel homeViewModel, ViewManagerModel viewManagerModel) {
         this.homeViewModel = homeViewModel;
+        this.viewManagerModel = viewManagerModel;
 
         final JLabel title = new JLabel(HomeViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -37,6 +43,8 @@ public class HomeView extends JPanel implements ActionListener {
         buttons.add(toNewTask);
         toCurrTasks = new JButton(HomeViewModel.TO_CURR_TASKS_LABEL);
         buttons.add(toCurrTasks);
+        goToTimer = new JButton("Go To Timer");
+        buttons.add(goToTimer);
 
         toCurrTasks.addActionListener(
                 new ActionListener() {
@@ -53,6 +61,12 @@ public class HomeView extends JPanel implements ActionListener {
                     }
                 }
         );
+        goToTimer.addActionListener(evt -> {
+            if (evt.getSource().equals(goToTimer)) {
+                viewManagerModel.setState("local timer");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -70,7 +84,8 @@ public class HomeView extends JPanel implements ActionListener {
         return viewName;
     }
 
-    public void setSignupController(HomeController controller) {
+    public void setHomeController(HomeController controller) {
+
         this.homeController = controller;
     }
 }

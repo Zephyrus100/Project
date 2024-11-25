@@ -13,8 +13,7 @@ public class Main {
                 .addSignupView()
                 .addLoginView()
                 .addHomeView()
-                .addEnterTaskView()
-                .addTaskEnteredView()
+//                .addTaskEnteredView()
                 .addLoggedInView()
                 .addTimerView()
                 .addEnterTaskView()
@@ -23,6 +22,7 @@ public class Main {
         // Add necessary use cases
         appBuilder
                 .addSignupUseCase()
+                .addHomeUseCase()
                 .addLoginUseCase()
                 .addEnterTaskUseCase()
                 .addChangePasswordUseCase()
