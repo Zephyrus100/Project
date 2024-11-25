@@ -38,6 +38,8 @@ import use_case.enter_task.EnterTaskInteractor;
 import use_case.enter_task.EnterTaskOutputBoundary;
 //import use_case.enter_task.InMemoryTaskData;
 import use_case.home.HomeInputBoundary;
+import use_case.home.HomeInteractor;
+import use_case.home.HomeOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -103,7 +105,7 @@ public class AppBuilder {
      */
     public AppBuilder addHomeView() {
         homeViewModel = new HomeViewModel();
-        homeView = new HomeView(homeViewModel);
+        homeView = new HomeView(homeViewModel, viewManagerModel);
         cardPanel.add(homeView, homeView.getViewName());
         return this;
     }
@@ -155,6 +157,16 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addHomeUseCase() {
+        final HomeOutputBoundary homeOutputBoundary = new HomePresenter(viewManagerModel,
+                homeViewModel, enterTaskViewModel);
+        final HomeInputBoundary userHomeInteractor = new HomeInteractor(homeOutputBoundary);
+
+        final HomeController homeController = new HomeController(userHomeInteractor);
+        homeView.setHomeController(homeController);
+        return this;
+
+    }
     /**
      * Adds the Signup Use Case to the application.
      * @return this builder
@@ -245,7 +257,7 @@ public class AppBuilder {
         );
 
         final LocalTimerController timerController = new LocalTimerController(timerInteractor);
-        final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController);
+        final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController, viewManagerModel);
         cardPanel.add(timerView, timerView.getViewName());
 
         return this;
@@ -256,13 +268,13 @@ public class AppBuilder {
      * @return the application
      */
     public JFrame build() {
-        final JFrame application = new JFrame("Enter Task Example");
+        final JFrame application = new JFrame("Task Manager");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);
 
         // Ensure the correct initial view is set here:
-        cardLayout.show(cardPanel, enterTaskView.getViewName());  // Ensure this points to the Enter Task View
+        cardLayout.show(cardPanel, homeView.getViewName());  // Ensure this points to the Enter Task View
 
         return application;
     }
