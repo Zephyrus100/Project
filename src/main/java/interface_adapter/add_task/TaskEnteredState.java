@@ -9,6 +9,7 @@ public class TaskEnteredState {
     private String taskDescription;
     private String taskStatus;
     private double taskTime;
+    private double progress;
 
     public String getTaskName() {
         return taskName;
@@ -44,5 +45,13 @@ public class TaskEnteredState {
 
     public String getTaskError() {
         return "The task was not added!";
+    }
+
+    public void setProgress(double progress) {
+        this.progress = progress;
+    }
+
+    public double getProgress() {
+        return progress;
     }
 }
