@@ -10,6 +10,7 @@ public class EnterTaskState {
         private String taskStatus;
         private double taskTime;
         private String taskError;
+        private double progress;
 
         public String getTaskName() {
             return taskName;
@@ -46,4 +47,12 @@ public class EnterTaskState {
         public void setEnterTaskError(String error) {
             this.taskError = error;
         }
+
+//        public void setProgress(double progress) {
+//            this.progress = progress;
+//        }
+//
+//        public void getProgress() {
+//            return progress;
+//        }
 }
