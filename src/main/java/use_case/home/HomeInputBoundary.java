@@ -13,4 +13,9 @@ public interface HomeInputBoundary {
      * Executes the switch to new task view use case.
      */
     void switchToNewTaskView();
+
+//    /**
+//     * Executes the switch to the timer use case.
+//     */
+//    void switchToTimerView();
 }
