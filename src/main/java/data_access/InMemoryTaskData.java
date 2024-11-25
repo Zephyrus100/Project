@@ -2,6 +2,8 @@ package data_access;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import entity.Task;
 import use_case.enter_task.EnterTaskDataInterface;
 
 public class InMemoryTaskData implements EnterTaskDataInterface {
@@ -10,15 +12,15 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
     private final Map<String, Task> tasks = new HashMap<>();
 
     @Override
-    public void addTask(String taskName, String taskDescription, double taskTime, String taskStatus) {
-        Task task = new Task(taskName, taskDescription, taskTime, taskStatus);
-        tasks.put(taskName, task);
+    public void addTask(Task task) {
+        tasks.put(task.getTitle(), task);
     }
+
 
     @Override
     public String getTaskName(String taskName) {
         Task task = tasks.get(taskName);
-        return (task != null) ? task.getTaskName() : null;
+        return (task != null) ? task.getTitle() : null;
     }
 
     @Override
@@ -30,15 +32,15 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
     @Override
     public String getTaskStatus(String taskName) {
         Task task = tasks.get(taskName);
-        return (task != null) ? task.getTaskStatus() : null;
+        return (task != null) ? task.getTitle() : null;
     }
 
     @Override
     public String getTaskDescription(String taskName) {
         Task task = tasks.get(taskName);
-        return (task != null) ? task.getTaskDescription() : null;
+        return (task != null) ? task.getDescription() : null;
     }
-
+/*
     // Inner Task class to store individual task information
     private static class Task {
         private final String taskName;
@@ -69,4 +71,6 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
             return taskStatus;
         }
     }
+
+ */
 }
