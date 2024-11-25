@@ -19,6 +19,15 @@ public class TaskEnteredViewModel extends ViewModel<TaskEnteredState> {
         currentState.setTaskName(taskTitle);
         currentState.setTaskDescription(taskDescription);
         currentState.setTaskTime(taskTime);
+//        currentState.setProgress(0.0);
+
+        setState(currentState);
+        firePropertyChanged();
+    }
+
+    public void updateProgress(double progress) {
+        TaskEnteredState currentState = getState();
+        currentState.setProgress(progress);
 
         setState(currentState);
         firePropertyChanged();

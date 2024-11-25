@@ -5,16 +5,20 @@ package entity;
  */
 public class Task implements TaskInterface {
 
-    private TimerSession timer;
+    private final double plannedDuration;
     private String status;
-    private String title;
-    private String description;
+    private final String title;
+    private final String description;
+    private double elapsedMinutes;
 
-    public Task(TimerSession timer, String status, String title, String description) {
-        this.timer = timer;
-        this.status = status;
+    // I delete status as the parameter. The initial status is Uncompleted,
+    // Then write new function to determine which status.
+    public Task(double plannedDuration, String title, String description) {
+        this.plannedDuration = plannedDuration;
+        this.status = "Uncompleted";
         this.title = title;
         this.description = description;
+        this.elapsedMinutes = 0.0;
     }
 
     @Override
@@ -34,6 +38,34 @@ public class Task implements TaskInterface {
 
     @Override
     public double getTaskTime() {
-        return timer.getDuration() ;
+        return plannedDuration ;
     }
+
+    // Return progress for the task. Return the progress from 0 to 100.
+    public double getProgress() {
+        return (elapsedMinutes / plannedDuration) * 100;
+    }
+
+    // Update the progress.
+    public void updateProgress(double elapsedMinutes) {
+        this.elapsedMinutes =Math.min(elapsedMinutes, plannedDuration);
+        updateStatus();
+    }
+    private void updateStatus() {
+        if (elapsedMinutes >= plannedDuration) {
+            status = "Completed";
+        }
+        else {
+            status = "Uncompleted";
+        }
+    }
+
+    // New: If the duration is completed we can use it as a timerSession! Then for the report.
+//    public double getActualDuration() {
+//        if (completedTimer != null) {
+//
+//            return completedTimer.getDuration() / (60.0 * 1_000_000_000L);
+//        }
+//        return 0.0;
+//    }
 }
