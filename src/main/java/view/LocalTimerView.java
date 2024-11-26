@@ -44,6 +44,8 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
     private final Timer displayTimer;
 
     private final JButton enterTask;
+    private final JButton saveTime;
+    private final JButton homePage;
 
     private final ViewManagerModel viewManagerModel;
 
@@ -104,12 +106,31 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         final JPanel buttons = new JPanel();
         enterTask = new JButton("Enter Task");
         buttons.add(enterTask);
+
+
+        // add the save button
+        saveTime = new JButton("Save");
+        buttons.add(saveTime);
         add(buttons);
-//        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//        saveTime.addActionListener(e -> {
+//            JOptionPane.showMessageDialog(frame,
+//                    "The focus time has been saved.");
+//            // your focus time is: ___
+//        });
+
+        homePage = new JButton("Home Page");
+        buttons.add(homePage);
 
         enterTask.addActionListener(evt -> {
             if (evt.getSource().equals(enterTask)) {
                 viewManagerModel.setState("Enter Task");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
+        homePage.addActionListener(evt -> {
+            if (evt.getSource().equals(homePage)) {
+                viewManagerModel.setState("Home View");
                 viewManagerModel.firePropertyChanged();
             }
         });
