@@ -134,7 +134,7 @@ public class AppBuilder {
 
     public AppBuilder addEnterTaskView() {
         enterTaskViewModel = new EnterTaskViewModel();
-        enterTaskView = new EnterTaskView(enterTaskViewModel);
+        enterTaskView = new EnterTaskView(enterTaskViewModel, viewManagerModel);
         cardPanel.add(enterTaskView, enterTaskView.getViewName());
         return this;
     }
@@ -274,7 +274,7 @@ public class AppBuilder {
         application.add(cardPanel);
 
         // Ensure the correct initial view is set here:
-        cardLayout.show(cardPanel, homeView.getViewName());  // Ensure this points to the Enter Task View
+        cardLayout.show(cardPanel, signupView.getViewName());  // Ensure this points to the Enter Task View
 
         return application;
     }
