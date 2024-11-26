@@ -1,6 +1,7 @@
 package view;
 
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.add_task.EnterTaskController;
 import interface_adapter.add_task.EnterTaskState;
 import interface_adapter.add_task.EnterTaskViewModel;
@@ -28,11 +29,15 @@ public class EnterTaskView extends JPanel implements ActionListener, PropertyCha
     private final JTextField minutesInputField = new JTextField(5);
 
     private final JLabel taskErrorField = new JLabel();
+    private final ViewManagerModel viewManagerModel;
 
     private EnterTaskController enterTaskController;
 
-    public EnterTaskView(EnterTaskViewModel enterTaskViewModel) {
+    private final JButton goToHomeView;
+
+    public EnterTaskView(EnterTaskViewModel enterTaskViewModel, ViewManagerModel viewManagerModel) {
         this.enterTaskViewModel = enterTaskViewModel;
+        this.viewManagerModel = viewManagerModel;
         this.setEnterTaskController(enterTaskController);
         enterTaskViewModel.addPropertyChangeListener(this);
 
@@ -51,6 +56,11 @@ public class EnterTaskView extends JPanel implements ActionListener, PropertyCha
         timeInputPanel.add(new JLabel("Minutes: "));
         timeInputPanel.add(minutesInputField);
 
+        final JPanel buttons = new JPanel();
+        goToHomeView = new JButton("Home");
+        buttons.add(goToHomeView);
+        this.add(buttons);
+
         final JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(
                 evt -> {
@@ -67,6 +77,12 @@ public class EnterTaskView extends JPanel implements ActionListener, PropertyCha
                 }
         );
 
+        goToHomeView.addActionListener(evt -> {
+            if (evt.getSource().equals(goToHomeView)) {
+                viewManagerModel.setState("Home View");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
 
         taskNameInputField.getDocument(
 

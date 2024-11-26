@@ -19,7 +19,7 @@ import interface_adapter.home.HomeViewModel;
  * The View for the Home Use Case.
  */
 public class HomeView extends JPanel implements ActionListener {
-    private final String viewName = "HomeView";
+    private final String viewName = "Home View";
 
     private final HomeViewModel homeViewModel;
     private HomeController homeController;
@@ -28,6 +28,7 @@ public class HomeView extends JPanel implements ActionListener {
     private final JButton toCurrTasks;
 
     private final JButton goToTimer;
+    private final JButton toReport;
 
     private final ViewManagerModel viewManagerModel;
 
@@ -45,14 +46,25 @@ public class HomeView extends JPanel implements ActionListener {
         buttons.add(toCurrTasks);
         goToTimer = new JButton("Go To Timer");
         buttons.add(goToTimer);
+        toReport = new JButton("Report");
+        buttons.add(toReport);
+        // TODO: add the report listener later.
 
-        toCurrTasks.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        homeController.switchtoCurrTasksView();
-                    }
-                }
-        );
+//        toCurrTasks.addActionListener(
+//                new ActionListener() {
+//                    public void actionPerformed(ActionEvent evt) {
+//                        homeController.switchtoCurrTasksView();
+//                    }
+//                }
+//        );
+
+        toCurrTasks.addActionListener(evt -> {
+            if (evt.getSource().equals(toCurrTasks)) {
+                viewManagerModel.setState("Task Entered View");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
 
         toNewTask.addActionListener(
                 new ActionListener() {
@@ -61,6 +73,8 @@ public class HomeView extends JPanel implements ActionListener {
                     }
                 }
         );
+
+
         goToTimer.addActionListener(evt -> {
             if (evt.getSource().equals(goToTimer)) {
                 viewManagerModel.setState("local timer");

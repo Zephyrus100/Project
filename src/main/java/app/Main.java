@@ -13,7 +13,6 @@ public class Main {
                 .addSignupView()
                 .addLoginView()
                 .addHomeView()
-//                .addTaskEnteredView()
                 .addLoggedInView()
                 .addTimerView()
                 .addEnterTaskView()
