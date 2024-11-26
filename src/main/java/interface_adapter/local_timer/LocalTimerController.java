@@ -23,6 +23,13 @@ public class LocalTimerController {
         timerUseCaseInteractor.execute(timerInputData);
     }
 
+    public void saveTimerSession() {
+        System.out.println("Controller: Saving session");
+        LocalTimerInputData timerInputData = new LocalTimerInputData("save");
+        timerInputData.setElapsedTime(timerUseCaseInteractor.getCurrentElapsedTime());
+        timerUseCaseInteractor.execute(timerInputData);
+    }
+
     // TODO: Write the switch view method.
     // public void switchToLoginView() {
     //     timerUseCaseInteractor.switchToLoginView();
