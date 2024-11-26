@@ -125,6 +125,8 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
             }
         });
 
+        // Test
+
         homePage.addActionListener(evt -> {
             if (evt.getSource().equals(homePage)) {
                 viewManagerModel.setState("Home View");
@@ -132,12 +134,12 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
             }
         });
 
-        saveTime.addActionListener(evt -> {
-            if (evt.getSource().equals(saveTime)) {
-                System.out.println("Save button clicked");
-                timerController.saveTimerSession();
-            }
-        });
+        // saveTime.addActionListener(evt -> {
+        //     if (evt.getSource().equals(saveTime)) {
+        //         System.out.println("Save button clicked");
+        //         timerController.saveTimerSession();
+        //     }
+        // });
     }
 
     private JButton createButton(String label) {
