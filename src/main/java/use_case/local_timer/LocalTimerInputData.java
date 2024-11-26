@@ -5,6 +5,7 @@ package use_case.local_timer;
  */
 public class LocalTimerInputData {
     private final String operation;
+    private long elapsedTime;
 
     /**
      * Creates a new LocalTimerInputData.
@@ -13,6 +14,7 @@ public class LocalTimerInputData {
      */
     public LocalTimerInputData(String operation) {
         this.operation = operation;
+        this.elapsedTime = 0;
     }
 
     /**
@@ -21,5 +23,13 @@ public class LocalTimerInputData {
      */
     public String getOperation() {
         return operation;
+    }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
+
+    public long getElapsedTime() {
+        return elapsedTime;
     }
 }

@@ -6,6 +6,8 @@ import interface_adapter.add_task.TaskEnteredViewModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Instant;
+import javax.swing.Timer;
 
 public class TaskEnteredView extends JPanel {
 
@@ -16,6 +18,13 @@ public class TaskEnteredView extends JPanel {
     private JLabel taskDescription = new JLabel();
     private JLabel taskStatus = new JLabel();
     private final ViewManagerModel viewManagerModel;
+    private JProgressBar progressBar;
+    private JLabel timeLabel;
+    private Instant startTime;
+    private Timer progressTimer;
+    private double totalTaskTime;
+
+    private JButton homePage = new JButton();
 
     public TaskEnteredView(TaskEnteredViewModel taskEnteredViewModel, ViewManagerModel viewManagerModel) {
         this.taskEnteredViewModel = taskEnteredViewModel;
@@ -30,18 +39,42 @@ public class TaskEnteredView extends JPanel {
         setupLabel(taskDescription);
         setupLabel(taskStatus);
 
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setPreferredSize(new Dimension(300, 40));
+        progressBar.setStringPainted(true);
+        timeLabel = new JLabel();
+
+        startTime = Instant.now();
+        progressTimer = new Timer(1000, e -> updateProgress()); // Update every second
+
         taskEnteredViewModel.addPropertyChangeListener(evt -> {
             TaskEnteredState currentState = (TaskEnteredState) evt.getNewValue();
 
             taskName.setText(formatHtml("Task:", currentState.getTaskName()));
             taskDescription.setText(formatHtml("Description:", currentState.getTaskDescription()));
             taskStatus.setText(formatHtml("Status:", "In Progress"));
+            timeLabel.setText(String.format("Time: %.1f minutes", currentState.getTaskTime()));
+
+            totalTaskTime = currentState.getTaskTime();
+
+            startTime = Instant.now();
+            if (totalTaskTime > 0) {
+                progressTimer.start();
+            }
         });
+
+        final JPanel buttons = new JPanel();
+
+        homePage = new JButton("Home Page");
+        buttons.add(homePage);
+
 
         TaskEnteredState currentState = taskEnteredViewModel.getState();
         taskName.setText(formatHtml("Task:", currentState.getTaskName()));
         taskDescription.setText(formatHtml("Description:", currentState.getTaskDescription()));
         taskStatus.setText(formatHtml("Status:", "In Progress"));
+        timeLabel.setText(String.format("Time: %.1f minutes", currentState.getTaskTime()));
+        totalTaskTime = currentState.getTaskTime();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10); // Padding between components
@@ -54,6 +87,23 @@ public class TaskEnteredView extends JPanel {
 
         gbc.gridy = 2;
         this.add(taskStatus, gbc);
+
+        gbc.gridy = 3;
+        this.add(timeLabel, gbc);
+
+        gbc.gridy = 4;
+        this.add(progressBar, gbc);
+
+        gbc.gridy = 5;
+        this.add(homePage, gbc);
+
+        homePage.addActionListener(evt -> {
+            if (evt.getSource().equals(homePage)) {
+                viewManagerModel.setState("Home View");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+        this.add(buttons);
     }
 
     private void setupLabel(JLabel label) {
@@ -68,4 +118,17 @@ public class TaskEnteredView extends JPanel {
                 label, value
         );
     }
+    private void updateProgress() {
+        double elapsedMinutes = (System.currentTimeMillis() - startTime.toEpochMilli()) / 60000.0;
+        double progressPercent = Math.min((elapsedMinutes / totalTaskTime) * 100, 100);
+
+        progressBar.setValue((int) progressPercent);
+        timeLabel.setText(String.format("Time: %.1f / %.1f minutes", elapsedMinutes, totalTaskTime));
+
+        if (progressPercent >= 100) {
+            progressTimer.stop();
+            taskStatus.setText(formatHtml("Status:", "Completed!"));
+        }
+    }
+
 }

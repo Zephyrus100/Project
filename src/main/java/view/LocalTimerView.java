@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.local_timer.LocalTimerController;
 import interface_adapter.local_timer.LocalTimerState;
 import interface_adapter.local_timer.LocalTimerViewModel;
@@ -8,8 +9,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -36,17 +43,29 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
     private final JButton resetButton;
     private final Timer displayTimer;
 
+    private final JButton enterTask;
+    private final JButton saveTime;
+    private final JButton homePage;
+
+    private final ViewManagerModel viewManagerModel;
+
     /**
      * Creates a new LocalTimerView with basic timer controls.
      *
      * @param timerViewModel   the view model that manages the timer's state
      * @param timerController  the controller that handles timer operations
      */
-    public LocalTimerView(LocalTimerViewModel timerViewModel, LocalTimerController timerController) {
-        this.viewName = "local timer";
+    public LocalTimerView(LocalTimerViewModel timerViewModel, LocalTimerController timerController,
+                          ViewManagerModel viewManagerModel) {
         this.timerViewModel = timerViewModel;
         this.timerController = timerController;
-        this.timerViewModel.addPropertyChangeListener(this);
+        this.viewManagerModel = viewManagerModel;
+        this.viewName = timerViewModel.getViewName();
+        
+        timerViewModel.addPropertyChangeListener(this);
+        
+        final JLabel title = new JLabel("Timer");
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         displayTimer = new Timer(100, new ActionListener() {
             @Override
@@ -72,12 +91,14 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton = createButton(LocalTimerViewModel.RESUME_BUTTON_LABEL);
         stopButton = createButton(LocalTimerViewModel.STOP_BUTTON_LABEL);
         resetButton = createButton(LocalTimerViewModel.RESET_BUTTON_LABEL);
+        saveTime = createButton(LocalTimerViewModel.SAVE_BUTTON_LABEL);
 
         buttonsPanel.add(startButton);
         buttonsPanel.add(pauseButton);
         buttonsPanel.add(resumeButton);
         buttonsPanel.add(stopButton);
         buttonsPanel.add(resetButton);
+        buttonsPanel.add(saveTime);
 
         add(Box.createVerticalStrut(10));
         add(timeLabel);
@@ -85,6 +106,39 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         add(buttonsPanel);
 
         updateButtonStates(LocalTimerViewModel.TIMER_STOPPED);
+
+        final JPanel buttons = new JPanel();
+        enterTask = new JButton("Enter Task");
+        buttons.add(enterTask);
+
+
+        homePage = new JButton("Home Page");
+        buttons.add(homePage);
+
+        add(buttons);
+
+
+        enterTask.addActionListener(evt -> {
+            if (evt.getSource().equals(enterTask)) {
+                viewManagerModel.setState("Enter Task");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
+        homePage.addActionListener(evt -> {
+            if (evt.getSource().equals(homePage)) {
+                viewManagerModel.setState("Home View");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
+
+        saveTime.addActionListener(evt -> {
+            if (evt.getSource().equals(saveTime)) {
+                System.out.println("Save button clicked");
+                timerController.saveTimerSession();
+            }
+        });
     }
 
     private JButton createButton(String label) {
@@ -115,8 +169,27 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final LocalTimerState state = (LocalTimerState) evt.getNewValue();
-        updateView(state);
+        System.out.println("View: Property change event received");
+        if (evt.getPropertyName().equals("state")) {
+            LocalTimerState state = (LocalTimerState) evt.getNewValue();
+            System.out.println("View: New timer state is: " + state.getTimerState());
+            
+            if (LocalTimerViewModel.TIMER_SAVED.equals(state.getTimerState())) {
+                System.out.println("View: Showing save dialog");
+                JOptionPane.showMessageDialog(
+                    this,
+                    String.format("Your focus time (%.1f minutes) has been saved.", 
+                        TimeUnit.NANOSECONDS.toMinutes(state.getTotalTime())),
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                state.setTimerState(displayTimer.isRunning() ? 
+                    LocalTimerViewModel.TIMER_RUNNING : 
+                    LocalTimerViewModel.TIMER_STOPPED);
+            }
+            
+            updateView(state);
+        }
     }
 
     private void updateView(LocalTimerState state) {
