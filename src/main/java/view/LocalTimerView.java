@@ -57,11 +57,13 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
      */
     public LocalTimerView(LocalTimerViewModel timerViewModel, LocalTimerController timerController,
                           ViewManagerModel viewManagerModel) {
-        this.viewName = "local timer";
         this.timerViewModel = timerViewModel;
         this.timerController = timerController;
-        this.timerViewModel.addPropertyChangeListener(this);
         this.viewManagerModel = viewManagerModel;
+        this.viewName = timerViewModel.getViewName();
+        
+        timerViewModel.addPropertyChangeListener(this);
+        
         final JLabel title = new JLabel("Timer");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -89,12 +91,14 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton = createButton(LocalTimerViewModel.RESUME_BUTTON_LABEL);
         stopButton = createButton(LocalTimerViewModel.STOP_BUTTON_LABEL);
         resetButton = createButton(LocalTimerViewModel.RESET_BUTTON_LABEL);
+        saveTime = createButton(LocalTimerViewModel.SAVE_BUTTON_LABEL);
 
         buttonsPanel.add(startButton);
         buttonsPanel.add(pauseButton);
         buttonsPanel.add(resumeButton);
         buttonsPanel.add(stopButton);
         buttonsPanel.add(resetButton);
+        buttonsPanel.add(saveTime);
 
         add(Box.createVerticalStrut(10));
         add(timeLabel);
@@ -108,18 +112,11 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         buttons.add(enterTask);
 
 
-        // add the save button
-        saveTime = new JButton("Save");
-        buttons.add(saveTime);
-        add(buttons);
-//        saveTime.addActionListener(e -> {
-//            JOptionPane.showMessageDialog(frame,
-//                    "The focus time has been saved.");
-//            // your focus time is: ___
-//        });
-
         homePage = new JButton("Home Page");
         buttons.add(homePage);
+
+        add(buttons);
+
 
         enterTask.addActionListener(evt -> {
             if (evt.getSource().equals(enterTask)) {
@@ -132,6 +129,13 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
             if (evt.getSource().equals(homePage)) {
                 viewManagerModel.setState("Home View");
                 viewManagerModel.firePropertyChanged();
+            }
+        });
+
+        saveTime.addActionListener(evt -> {
+            if (evt.getSource().equals(saveTime)) {
+                System.out.println("Save button clicked");
+                timerController.saveTimerSession();
             }
         });
     }
@@ -164,8 +168,27 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final LocalTimerState state = (LocalTimerState) evt.getNewValue();
-        updateView(state);
+        System.out.println("View: Property change event received");
+        if (evt.getPropertyName().equals("state")) {
+            LocalTimerState state = (LocalTimerState) evt.getNewValue();
+            System.out.println("View: New timer state is: " + state.getTimerState());
+            
+            if (LocalTimerViewModel.TIMER_SAVED.equals(state.getTimerState())) {
+                System.out.println("View: Showing save dialog");
+                JOptionPane.showMessageDialog(
+                    this,
+                    String.format("Your focus time (%.1f minutes) has been saved.", 
+                        TimeUnit.NANOSECONDS.toMinutes(state.getTotalTime())),
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                state.setTimerState(displayTimer.isRunning() ? 
+                    LocalTimerViewModel.TIMER_RUNNING : 
+                    LocalTimerViewModel.TIMER_STOPPED);
+            }
+            
+            updateView(state);
+        }
     }
 
     private void updateView(LocalTimerState state) {
