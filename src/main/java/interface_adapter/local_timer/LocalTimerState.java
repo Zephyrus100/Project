@@ -12,7 +12,7 @@ public class LocalTimerState {
 
     public LocalTimerState() {
         this.timerState = "Stopped";
-        this.totalTime = 0;
+        this.totalTime = 0L;
         this.sessionCount = 0;
     }
 
