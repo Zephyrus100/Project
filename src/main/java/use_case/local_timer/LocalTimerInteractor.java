@@ -108,16 +108,21 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
                 break;
 
             case "save":
-                if (timer.getElapsedTime() > 0) {
-                    System.out.println("Interactor: Processing save operation");
+                System.out.println("Save operation received in interactor");
+                if (timer.canSave()) {
+                    System.out.println("Timer can be saved. Current elapsed time: " + timer.getElapsedTime());
                     long startTimeNanos = System.nanoTime() - timer.getElapsedTime();
                     long endTimeNanos = System.nanoTime();
                     long duration = timer.getElapsedTime();
                     timerDataAccess.saveSession(startTimeNanos, endTimeNanos, duration);
                     status = LocalTimerViewModel.TIMER_SAVED;
-                    System.out.println("Interactor: Status set to: " + status);
+                    System.out.println("Timer session saved successfully");
+                } else if (timer.isRunning()) {
+                    System.out.println("Cannot save - timer is running");
+                    status = LocalTimerViewModel.TIMER_CANNOT_SAVE_RUNNING;
                 } else {
-                    throw new IllegalStateException("No time to save");
+                    System.out.println("Cannot save - no elapsed time");
+                    status = LocalTimerViewModel.TIMER_CANNOT_SAVE_NO_TIME;
                 }
                 break;
 

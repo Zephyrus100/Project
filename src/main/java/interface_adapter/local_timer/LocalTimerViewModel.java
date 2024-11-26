@@ -18,6 +18,8 @@ public class LocalTimerViewModel extends ViewModel<LocalTimerState> {
     public static final String TIMER_RUNNING = "Running";
     public static final String TIMER_PAUSED = "Paused";
     public static final String TIMER_SAVED = "Saved";
+    public static final String TIMER_CANNOT_SAVE_RUNNING = "Cannot Save - Running";
+    public static final String TIMER_CANNOT_SAVE_NO_TIME = "Cannot Save - No Time";
 
     // Timer Control Buttons
     public static final String START_BUTTON_LABEL = "Start";

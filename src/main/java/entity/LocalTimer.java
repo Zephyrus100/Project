@@ -77,4 +77,9 @@ public class LocalTimer implements TimerInterface {
         return isRunning;
     }
 
+    @Override
+    public boolean canSave() {
+        return getElapsedTime() > 0 && !isRunning;
+    }
+
 }
