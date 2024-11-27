@@ -30,20 +30,30 @@ public class TaskEnteredView extends JPanel {
 
         viewName = "Task Entered View";
 
-        this.setLayout(new GridBagLayout()); // GridBagLayout centers components
-        this.setBackground(new Color(240, 248, 255)); // Light blue background
+        this.setLayout(new GridBagLayout());
+        this.setBackground(new Color(230, 240, 255));
+
+        this.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(15, 15, 15, 15),
+                BorderFactory.createLineBorder(new Color(100, 149, 237), 2)
+        ));
 
         setupLabel(taskName);
         setupLabel(taskDescription);
         setupLabel(taskStatus);
 
         progressBar = new JProgressBar(0, 100);
-        progressBar.setPreferredSize(new Dimension(300, 40));
+        progressBar.setPreferredSize(new Dimension(350, 35));
+        progressBar.setForeground(new Color(72, 61, 139));
+        progressBar.setBackground(new Color(211, 211, 211));
         progressBar.setStringPainted(true);
+
         timeLabel = new JLabel();
+        timeLabel.setFont(new Font("Arial", Font.ITALIC, 18));
+        timeLabel.setForeground(new Color(25, 25, 112));
 
         startTime = Instant.now();
-        progressTimer = new Timer(1000, e -> updateProgress()); // Update every second
+        progressTimer = new Timer(1000, e -> updateProgress());
 
         taskEnteredViewModel.addPropertyChangeListener(evt -> {
             TaskEnteredState currentState = (TaskEnteredState) evt.getNewValue();
@@ -54,8 +64,8 @@ public class TaskEnteredView extends JPanel {
             timeLabel.setText(String.format("Time: %.1f minutes", currentState.getTaskTime()));
 
             totalTaskTime = currentState.getTaskTime();
-
             startTime = Instant.now();
+
             if (totalTaskTime > 0) {
                 progressTimer.start();
             }
@@ -69,7 +79,8 @@ public class TaskEnteredView extends JPanel {
         totalTaskTime = currentState.getTaskTime();
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding between components
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         this.add(taskName, gbc);
@@ -88,17 +99,18 @@ public class TaskEnteredView extends JPanel {
     }
 
     private void setupLabel(JLabel label) {
-        label.setFont(new Font("Arial", Font.BOLD, 24));
-        label.setForeground(new Color(30, 30, 30)); // Dark text color
+        label.setFont(new Font("Verdana", Font.BOLD, 22));
+        label.setForeground(new Color(25, 25, 112));
         label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     private String formatHtml(String label, String value) {
         return String.format(
-                "<html><div style='text-align: center;'><span style='color: navy;'>%s</span><br><b>%s</b></div></html>",
+                "<html><div style='text-align: center;'><span style='color: #4682B4;'>%s</span><br><b>%s</b></div></html>",
                 label, value
         );
     }
+
     private void updateProgress() {
         double elapsedMinutes = (System.currentTimeMillis() - startTime.toEpochMilli()) / 60000.0;
         double progressPercent = Math.min((elapsedMinutes / totalTaskTime) * 100, 100);
@@ -109,7 +121,7 @@ public class TaskEnteredView extends JPanel {
         if (progressPercent >= 100) {
             progressTimer.stop();
             taskStatus.setText(formatHtml("Status:", "Completed!"));
+            taskStatus.setForeground(new Color(34, 139, 34));
         }
     }
-
 }
