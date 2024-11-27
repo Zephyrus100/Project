@@ -82,6 +82,13 @@ public class HomeView extends JPanel implements ActionListener {
             }
         });
 
+        toReport.addActionListener(evt -> {
+            if (evt.getSource().equals(toReport)) {
+                viewManagerModel.setState("report");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.add(title);

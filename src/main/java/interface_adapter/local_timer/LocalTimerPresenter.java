@@ -16,8 +16,7 @@ public class LocalTimerPresenter implements LocalTimerOutputBoundary {
 
     @Override
     public void prepareSuccessView(LocalTimerOutputData response) {
-        System.out.println("Presenter: Preparing success view with state: " + response.getTimerState());
-        final LocalTimerState timerState = timerViewModel.getState();
+        LocalTimerState timerState = timerViewModel.getState();
         timerState.setTimerState(response.getTimerState());
         timerState.setTotalTime(response.getElapsedTime());
 

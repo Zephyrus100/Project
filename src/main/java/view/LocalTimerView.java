@@ -145,7 +145,7 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
             JButton button = (JButton) evt.getSource();
             String operation = button.getText().toLowerCase();
             
-            System.out.println("Button clicked: " + operation);
+            // System.out.println("Button clicked: " + operation);
             
             if (operation.equals("save session")) {
                 timerController.execute("save");
@@ -168,11 +168,11 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("View: Property change event received");
+        // System.out.println("View: Property change event received");
         if (evt.getPropertyName().equals("state")) {
             LocalTimerState state = (LocalTimerState) evt.getNewValue();
             String timerState = state.getTimerState();
-            System.out.println("View: New timer state is: " + timerState);
+            // System.out.println("View: New timer state is: " + timerState);
             
             if (timerState.equals(LocalTimerViewModel.TIMER_SAVED)) {
                 long elapsedTime = state.getTotalTime();
