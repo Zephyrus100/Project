@@ -44,6 +44,8 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
     private final Timer displayTimer;
 
     private final JButton enterTask;
+    private final JButton saveTimeButton;
+    private final JButton homePage;
 
     private final ViewManagerModel viewManagerModel;
 
@@ -55,11 +57,13 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
      */
     public LocalTimerView(LocalTimerViewModel timerViewModel, LocalTimerController timerController,
                           ViewManagerModel viewManagerModel) {
-        this.viewName = "local timer";
         this.timerViewModel = timerViewModel;
         this.timerController = timerController;
-        this.timerViewModel.addPropertyChangeListener(this);
         this.viewManagerModel = viewManagerModel;
+        this.viewName = timerViewModel.getViewName();
+        
+        timerViewModel.addPropertyChangeListener(this);
+        
         final JLabel title = new JLabel("Timer");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -87,12 +91,14 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton = createButton(LocalTimerViewModel.RESUME_BUTTON_LABEL);
         stopButton = createButton(LocalTimerViewModel.STOP_BUTTON_LABEL);
         resetButton = createButton(LocalTimerViewModel.RESET_BUTTON_LABEL);
+        saveTimeButton = createButton(LocalTimerViewModel.SAVE_BUTTON_LABEL);
 
         buttonsPanel.add(startButton);
         buttonsPanel.add(pauseButton);
         buttonsPanel.add(resumeButton);
         buttonsPanel.add(stopButton);
         buttonsPanel.add(resetButton);
+        buttonsPanel.add(saveTimeButton);
 
         add(Box.createVerticalStrut(10));
         add(timeLabel);
@@ -104,12 +110,24 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         final JPanel buttons = new JPanel();
         enterTask = new JButton("Enter Task");
         buttons.add(enterTask);
+
+
+        homePage = new JButton("Home Page");
+        buttons.add(homePage);
+
         add(buttons);
-//        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 
         enterTask.addActionListener(evt -> {
             if (evt.getSource().equals(enterTask)) {
                 viewManagerModel.setState("Enter Task");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+
+        homePage.addActionListener(evt -> {
+            if (evt.getSource().equals(homePage)) {
+                viewManagerModel.setState("Home View");
                 viewManagerModel.firePropertyChanged();
             }
         });
@@ -124,9 +142,16 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
     @Override
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() instanceof JButton) {
-            final JButton button = (JButton) evt.getSource();
-            final String operation = button.getText().toLowerCase();
-            timerController.execute(operation);
+            JButton button = (JButton) evt.getSource();
+            String operation = button.getText().toLowerCase();
+            
+            // System.out.println("Button clicked: " + operation);
+            
+            if (operation.equals("save session")) {
+                timerController.execute("save");
+            } else {
+                timerController.execute(operation);
+            }
 
             handleTimerDisplay(operation);
         }
@@ -143,8 +168,34 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final LocalTimerState state = (LocalTimerState) evt.getNewValue();
-        updateView(state);
+        // System.out.println("View: Property change event received");
+        if (evt.getPropertyName().equals("state")) {
+            LocalTimerState state = (LocalTimerState) evt.getNewValue();
+            String timerState = state.getTimerState();
+            // System.out.println("View: New timer state is: " + timerState);
+            
+            if (timerState.equals(LocalTimerViewModel.TIMER_SAVED)) {
+                long elapsedTime = state.getTotalTime();
+                double minutes = elapsedTime / (60.0 * 1_000_000_000.0);  // Convert nanoseconds to minutes
+                JOptionPane.showMessageDialog(
+                    this,
+                    String.format("Your focus time (%.1f minutes) has been saved.", minutes),
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                state.setTimerState(LocalTimerViewModel.TIMER_STOPPED);
+            } else if (timerState.startsWith("Error:")) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    timerState.substring(7),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                state.setTimerState(LocalTimerViewModel.TIMER_STOPPED);
+            }
+            
+            updateView(state);
+        }
     }
 
     private void updateView(LocalTimerState state) {
@@ -174,6 +225,7 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton.setEnabled(false);
         stopButton.setEnabled(false);
         resetButton.setEnabled(false);
+        saveTimeButton.setEnabled(false);
     }
 
     private void setRunningButtonStates() {
@@ -182,6 +234,7 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton.setEnabled(false);
         stopButton.setEnabled(true);
         resetButton.setEnabled(true);
+        saveTimeButton.setEnabled(false);
     }
 
     private void setPausedButtonStates() {
@@ -190,6 +243,7 @@ public class LocalTimerView extends JPanel implements ActionListener, PropertyCh
         resumeButton.setEnabled(true);
         stopButton.setEnabled(true);
         resetButton.setEnabled(true);
+        saveTimeButton.setEnabled(true);
     }
 
     private String formatTime(long nanoSeconds) {

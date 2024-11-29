@@ -13,11 +13,11 @@ public class Main {
                 .addSignupView()
                 .addLoginView()
                 .addHomeView()
-//                .addTaskEnteredView()
                 .addLoggedInView()
                 .addTimerView()
                 .addEnterTaskView()
-                .addTaskEnteredView();
+                .addTaskEnteredView()
+                .addReportView();
 
         // Add necessary use cases
         appBuilder
@@ -27,7 +27,8 @@ public class Main {
                 .addEnterTaskUseCase()
                 .addChangePasswordUseCase()
                 .addLogoutUseCase()
-                .addEnterTaskUseCase();
+                .addEnterTaskUseCase()
+                .addReportUseCase();
 
         // Build and display the application
         JFrame appFrame = appBuilder.build();

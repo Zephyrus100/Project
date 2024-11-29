@@ -10,6 +10,8 @@ public interface LocalTimerInputBoundary {
      */
     void execute(LocalTimerInputData localTimerInputData);
 
+    long getCurrentElapsedTime();
+
     // TODO: switch to which view next?
     // void switchToLoginView();
 }

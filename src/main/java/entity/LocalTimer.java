@@ -4,7 +4,6 @@ package entity;
  * A simple implementation of the local timer.
  */
 public class LocalTimer implements TimerInterface {
-
     private long startTime;
     private boolean isRunning;
     private long totalPausedTime;
@@ -76,6 +75,11 @@ public class LocalTimer implements TimerInterface {
     @Override
     public boolean isRunning() {
         return isRunning;
+    }
+
+    @Override
+    public boolean canSave() {
+        return getElapsedTime() > 0 && !isRunning;
     }
 
 }

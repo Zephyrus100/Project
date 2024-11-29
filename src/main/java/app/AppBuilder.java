@@ -57,7 +57,15 @@ import use_case.local_timer.LocalTimerInteractor;
 import entity.LocalTimerFactory;
 import use_case.local_timer.LocalTimerDataAccessInterface;
 import data_access.InMemoryLocalTimerDataAccess;
-
+import data_access.InMemoryReportDataAccess;
+import entity.CommonReportFactory;
+import interface_adapter.report.ReportController;
+import interface_adapter.report.ReportPresenter;
+import interface_adapter.report.ReportViewModel;
+import use_case.report.ReportInputBoundary;
+import use_case.report.ReportInteractor;
+import use_case.report.ReportOutputBoundary;
+import use_case.report.ReportDataAccessInterface;
 /**
  * The AppBuilder class is responsible for putting together the pieces of
  * our CA architecture; piece by piece.
@@ -94,9 +102,15 @@ public class AppBuilder {
     private EnterTaskViewModel enterTaskViewModel;
     private TaskEnteredViewModel taskEnteredViewModel;
     private TaskEnteredView taskEnteredView;
+    private ReportViewModel reportViewModel;
+    private ReportView reportView;
+    private ReportController reportController;
+    private final InMemoryLocalTimerDataAccess timerData = new InMemoryLocalTimerDataAccess();
+    private final InMemoryReportDataAccess reportDataAccess;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
+        reportDataAccess = new InMemoryReportDataAccess(inMemoryTaskData, timerData);
     }
 
     /**
@@ -134,7 +148,7 @@ public class AppBuilder {
 
     public AppBuilder addEnterTaskView() {
         enterTaskViewModel = new EnterTaskViewModel();
-        enterTaskView = new EnterTaskView(enterTaskViewModel);
+        enterTaskView = new EnterTaskView(enterTaskViewModel, viewManagerModel);
         cardPanel.add(enterTaskView, enterTaskView.getViewName());
         return this;
     }
@@ -248,18 +262,44 @@ public class AppBuilder {
     public AppBuilder addTimerView() {
         final LocalTimerViewModel timerViewModel = new LocalTimerViewModel();
         final LocalTimerPresenter timerPresenter = new LocalTimerPresenter(timerViewModel);
-        final LocalTimerDataAccessInterface timerDataAccess = new InMemoryLocalTimerDataAccess();
-
+        
         final LocalTimerInteractor timerInteractor = new LocalTimerInteractor(
                 timerPresenter,
                 new LocalTimerFactory(),
-                timerDataAccess
+                timerData
         );
-
+        
         final LocalTimerController timerController = new LocalTimerController(timerInteractor);
         final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController, viewManagerModel);
         cardPanel.add(timerView, timerView.getViewName());
+        
+        return this;
+    }
 
+    /**
+     * Adds the Report View to the application.
+     * @return this builder
+     */
+    public AppBuilder addReportView() {
+        reportViewModel = new ReportViewModel();
+        reportView = new ReportView(reportViewModel, viewManagerModel);
+        cardPanel.add(reportView, reportView.getViewName());
+        return this;
+    }
+
+    /**
+     * Adds the Report Use Case to the application.
+     * @return this builder
+     */
+    public AppBuilder addReportUseCase() {
+        ReportOutputBoundary reportOutputBoundary = new ReportPresenter(viewManagerModel, reportViewModel);
+        ReportInputBoundary reportInteractor = new ReportInteractor(
+                reportOutputBoundary,
+                reportDataAccess,
+                new CommonReportFactory()
+        );
+        reportController = new ReportController(reportInteractor, reportDataAccess);
+        reportView.setReportController(reportController);
         return this;
     }
 
@@ -275,6 +315,7 @@ public class AppBuilder {
 
         // Ensure the correct initial view is set here:
         cardLayout.show(cardPanel, homeView.getViewName());  // Ensure this points to the Enter Task View
+        // cardLayout.show(cardPanel, "report");
 
         return application;
     }

@@ -24,6 +24,8 @@ public class TaskEnteredView extends JPanel {
     private Timer progressTimer;
     private double totalTaskTime;
 
+    private JButton homePage = new JButton();
+
     public TaskEnteredView(TaskEnteredViewModel taskEnteredViewModel, ViewManagerModel viewManagerModel) {
         this.taskEnteredViewModel = taskEnteredViewModel;
         this.viewManagerModel = viewManagerModel;
@@ -71,6 +73,12 @@ public class TaskEnteredView extends JPanel {
             }
         });
 
+        final JPanel buttons = new JPanel();
+
+        homePage = new JButton("Home Page");
+        buttons.add(homePage);
+
+
         TaskEnteredState currentState = taskEnteredViewModel.getState();
         taskName.setText(formatHtml("Task:", currentState.getTaskName()));
         taskDescription.setText(formatHtml("Description:", currentState.getTaskDescription()));
@@ -96,6 +104,17 @@ public class TaskEnteredView extends JPanel {
 
         gbc.gridy = 4;
         this.add(progressBar, gbc);
+
+        gbc.gridy = 5;
+        this.add(homePage, gbc);
+
+        homePage.addActionListener(evt -> {
+            if (evt.getSource().equals(homePage)) {
+                viewManagerModel.setState("Home View");
+                viewManagerModel.firePropertyChanged();
+            }
+        });
+        this.add(buttons);
     }
 
     private void setupLabel(JLabel label) {

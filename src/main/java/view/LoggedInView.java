@@ -37,7 +37,8 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final JTextField passwordInputField = new JTextField(15);
     private final JButton changePassword;
 
-    private final JButton goToTimer;
+//    private final JButton goToTimer;
+    private final JButton goToHomeView;
 
     private final ViewManagerModel viewManagerModel;
 
@@ -62,8 +63,8 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         changePassword = new JButton("Change Password");
         buttons.add(changePassword);
 
-        goToTimer = new JButton("Go to Timer");
-        buttons.add(goToTimer);
+        goToHomeView = new JButton("Home");
+        buttons.add(goToHomeView);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -115,9 +116,9 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                 }
         );
 
-        goToTimer.addActionListener(evt -> {
-            if (evt.getSource().equals(goToTimer)) {
-                viewManagerModel.setState("local timer");
+        goToHomeView.addActionListener(evt -> {
+            if (evt.getSource().equals(goToHomeView)) {
+                viewManagerModel.setState("Home View");
                 viewManagerModel.firePropertyChanged();
             }
         });
