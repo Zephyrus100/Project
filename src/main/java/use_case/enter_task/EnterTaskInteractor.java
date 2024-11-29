@@ -16,11 +16,23 @@ public class EnterTaskInteractor implements EnterTaskInputBoundary {
     @Override
     public void addTask(EnterTaskInputData inputTaskData) {
         if (inputTaskData.getTaskTime() != 0 && !inputTaskData.getTaskName().isEmpty()) {
-            final EnterTaskOutputData enterTaskOutputData= new EnterTaskOutputData(inputTaskData.getTaskName(), inputTaskData.getDescription(),
-                    inputTaskData.getTaskTime(), inputTaskData.getStatus());
+            taskData.addTask(
+                inputTaskData.getTaskName(),
+                inputTaskData.getDescription(),
+                inputTaskData.getTaskTime(),
+                inputTaskData.getStatus()
+            );
+
+            final EnterTaskOutputData enterTaskOutputData = new EnterTaskOutputData(
+                inputTaskData.getTaskName(),
+                inputTaskData.getDescription(),
+                inputTaskData.getTaskTime(),
+                inputTaskData.getStatus()
+            );
+            
+            System.out.println("Task saved to database: " + inputTaskData.getTaskName());
             presenter.prepareTaskAddedView(enterTaskOutputData);
-        }
-        else {
+        } else {
             presenter.prepareTaskNotAddedView("Task could not be added! Try again!");
         }
     }

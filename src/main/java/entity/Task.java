@@ -68,4 +68,14 @@ public class Task implements TaskInterface {
 //        }
 //        return 0.0;
 //    }
+
+    /**
+     * Sets the status of the task.
+     * @param status The new status to set
+     */
+    public void setStatus(String status) {
+        if (status != null && (status.equals("Completed") || status.equals("Uncompleted"))) {
+            this.status = status;
+        }
+    }
 }

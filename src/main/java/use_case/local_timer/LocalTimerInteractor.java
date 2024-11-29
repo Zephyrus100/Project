@@ -3,6 +3,7 @@ package use_case.local_timer;
 import entity.TimerFactory;
 import entity.TimerInterface;
 import view.LocalTimerView;
+import interface_adapter.local_timer.LocalTimerViewModel;
 
 /**
  * The Local Timer Interactor.
@@ -55,7 +56,7 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
     private void processTimerOperation(final String operation) {
         String status = "";
 
-        switch (operation) {
+        switch (operation.toLowerCase()) {
             case "start":
                 if (timer.isRunning()) {
                     throw new IllegalStateException("Timer is already running");
@@ -106,6 +107,22 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
                 status = timer.isRunning() ? "Running" : timer.getElapsedTime() > 0 ? "Paused" : "Stopped";
                 break;
 
+            case "save":
+                if (timer.canSave()) {
+                    long startTimeNanos = System.nanoTime() - timer.getElapsedTime();
+                    long endTimeNanos = System.nanoTime();
+                    long duration = timer.getElapsedTime();
+                    timerDataAccess.saveSession(startTimeNanos, endTimeNanos, duration);
+                    
+                    LocalTimerOutputData outputData = new LocalTimerOutputData(
+                        true,
+                        LocalTimerViewModel.TIMER_SAVED,
+                        timer.getElapsedTime()
+                    );
+                    timerPresenter.prepareSuccessView(outputData);
+                }
+                break;
+
             default:
                 throw new IllegalArgumentException("Invalid operation: " + operation);
         }
@@ -116,5 +133,10 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
                 timer.getElapsedTime()
         );
         timerPresenter.prepareSuccessView(outputData);
+    }
+
+    @Override
+    public long getCurrentElapsedTime() {
+        return timer.getElapsedTime();
     }
 }

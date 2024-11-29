@@ -1,5 +1,7 @@
 package data_access;
 
+import entity.Task;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +14,19 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
     private final Map<String, Task> tasks = new HashMap<>();
 
     @Override
+
     public void addTask(Task task) {
+        task.setStatus(task.getStatus());
         tasks.put(task.getTitle(), task);
+        
+        // Debug print statements
+        System.out.println("Task added to InMemoryTaskData:");
+        System.out.println("Task Name: " + task.getTitle());
+        System.out.println("Task Description: " + task.getDescription());
+        System.out.println("Task Time: " + task.getTaskTime());
+        System.out.println("Task Status: " + task.getStatus());
+        System.out.println("Total tasks in memory: " + tasks.size());
+
     }
 
 
@@ -32,7 +45,9 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
     @Override
     public String getTaskStatus(String taskName) {
         Task task = tasks.get(taskName);
-        return (task != null) ? task.getTitle() : null;
+
+        return (task != null) ? task.getStatus() : null;
+
     }
 
     @Override
@@ -40,37 +55,30 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
         Task task = tasks.get(taskName);
         return (task != null) ? task.getDescription() : null;
     }
-/*
-    // Inner Task class to store individual task information
-    private static class Task {
-        private final String taskName;
-        private final String taskDescription;
-        private final double taskTime;
-        private final String taskStatus;
 
-        public Task(String taskName, String taskDescription, double taskTime, String taskStatus) {
-            this.taskName = taskName;
-            this.taskDescription = taskDescription;
-            this.taskTime = taskTime;
-            this.taskStatus = taskStatus;
-        }
 
-        public String getTaskName() {
-            return taskName;
-        }
 
-        public String getTaskDescription() {
-            return taskDescription;
-        }
+    public ArrayList<Task> getAllTasks() {
+        System.out.println("\nDebug: InMemoryTaskData.getAllTasks() called");
+        System.out.println("Number of tasks in memory: " + tasks.size());
+        
+        for (Task task : tasks.values()) {
+            System.out.println("Task in memory: " + task.getTitle());
 
-        public double getTaskTime() {
-            return taskTime;
         }
-
-        public String getTaskStatus() {
-            return taskStatus;
-        }
+        
+        return new ArrayList<>(tasks.values());
     }
 
- */
+    public double getTotalTaskTime() {
+        return tasks.values().stream()
+                   .mapToDouble(Task::getTaskTime)
+                   .sum();
+    }
+
+    public int getTotalTaskCount() {
+        return tasks.size();
+    }
+
+
 }

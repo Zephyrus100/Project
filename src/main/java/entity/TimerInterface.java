@@ -42,4 +42,10 @@ public interface TimerInterface {
      */
     boolean isRunning();
 
+    /**
+     * Checks if the timer can be saved in its current state
+     * @return true if the timer can be saved
+     */
+    boolean canSave();
+
 }
