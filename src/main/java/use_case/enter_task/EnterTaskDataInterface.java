@@ -1,16 +1,14 @@
 package use_case.enter_task;
 
+import entity.Task;
+
 public interface EnterTaskDataInterface {
 
     /**
      * Adds a task with the given parameters.
-     *
-     * @param taskName        the name of the task
-     * @param taskDescription the description of the task
-     * @param taskTime        the time required for the task
-     * @param taskStatus      the status of the task (e.g., completed or not)
+     * @param task the task to be added
      */
-    void addTask(String taskName, String taskDescription, double taskTime, String taskStatus);
+    void addTask(Task task);
 
     /**
      * Retrieves the task name based on an index or identifier.
