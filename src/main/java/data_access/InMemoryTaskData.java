@@ -76,6 +76,7 @@ public class InMemoryTaskData implements EnterTaskDataInterface {
                    .sum();
     }
 
+
     public int getTotalTaskCount() {
         return tasks.size();
     }
