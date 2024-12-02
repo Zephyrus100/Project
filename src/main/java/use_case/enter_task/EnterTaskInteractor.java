@@ -2,6 +2,7 @@ package use_case.enter_task;
 
 import entity.LocalTimer;
 import entity.TimerSession;
+import entity.Task;
 
 public class EnterTaskInteractor implements EnterTaskInputBoundary {
 
@@ -16,12 +17,11 @@ public class EnterTaskInteractor implements EnterTaskInputBoundary {
     @Override
     public void addTask(EnterTaskInputData inputTaskData) {
         if (inputTaskData.getTaskTime() != 0 && !inputTaskData.getTaskName().isEmpty()) {
-            taskData.addTask(
-                inputTaskData.getTaskName(),
-                inputTaskData.getDescription(),
-                inputTaskData.getTaskTime(),
-                inputTaskData.getStatus()
+            Task task = new Task(inputTaskData.getTaskTime(),
+                    inputTaskData.getTaskName(),
+                    inputTaskData.getDescription()
             );
+            taskData.addTask(task);
 
             final EnterTaskOutputData enterTaskOutputData = new EnterTaskOutputData(
                 inputTaskData.getTaskName(),
