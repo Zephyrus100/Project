@@ -15,6 +15,7 @@ public class QuoteInteractor implements QuoteInputBoundary {
 
     @Override
     public void execute() {
+
         CommonQuote quote = new CommonQuote(quoteDataAccessObject.getTodayQuote().getAuthor(),
                 quoteDataAccessObject.getTodayQuote().getContent());
         QuoteOutputData quoteOutputData = new QuoteOutputData(quote.getQuoteAuthor(),
