@@ -2,7 +2,6 @@ package use_case.get_quote;
 
 import data_access.ZenQuotesDataAccessObject;
 import entity.CommonQuote;
-import interface_adapter.get_quote.QuotePresenter;
 
 public class QuoteInteractor implements QuoteInputBoundary {
     private final ZenQuotesDataAccessObject quoteDataAccessObject;
@@ -16,14 +15,10 @@ public class QuoteInteractor implements QuoteInputBoundary {
 
     @Override
     public void execute() {
-        try {
-            CommonQuote quote = new CommonQuote(quoteDataAccessObject.getTodayQuote().getAuthor(),
-                    quoteDataAccessObject.getTodayQuote().getContent());
-            QuoteOutputData quoteOutputData = new QuoteOutputData(quote.getQuoteAuthor(),
-                    quote.getQuoteContent());
-            quotePresenter.prepareSuccessQuote(quoteOutputData);
-        } catch (Exception e) {
-            quotePresenter.prepareFailQuote("Error getting quote: " + e.getMessage());
-        }
+        CommonQuote quote = new CommonQuote(quoteDataAccessObject.getTodayQuote().getAuthor(),
+                quoteDataAccessObject.getTodayQuote().getContent());
+        QuoteOutputData quoteOutputData = new QuoteOutputData(quote.getQuoteAuthor(),
+                quote.getQuoteContent());
+        quotePresenter.prepareSuccessQuote(quoteOutputData);
     }
 }
