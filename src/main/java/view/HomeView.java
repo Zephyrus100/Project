@@ -21,6 +21,7 @@ public class HomeView extends JPanel implements ActionListener {
     private final RoundedButton toCurrTasks;
     private final RoundedButton goToTimer;
     private final RoundedButton toReport;
+    private final RoundedButton toQuote;
 
     private static final Color BACKGROUND_COLOR = new Color(245, 247, 251);
     private static final Color BUTTON_COLOR = new Color(79, 70, 229);
@@ -35,25 +36,31 @@ public class HomeView extends JPanel implements ActionListener {
         setBorder(new EmptyBorder(40, 40, 40, 40));
         setLayout(new BorderLayout(20, 20));
 
+        // Title setup
         JLabel title = new JLabel(HomeViewModel.TITLE_LABEL, SwingConstants.CENTER);
         title.setFont(new Font("Inter", Font.BOLD, 32));
         title.setForeground(new Color(30, 41, 59));
         title.setBorder(new EmptyBorder(0, 0, 30, 0));
 
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        // Button panel setup with 3x2 grid
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 20, 20));
         buttonPanel.setBackground(BACKGROUND_COLOR);
 
-        // Initialize buttons with icons and modern styling
+        // Initialize all buttons with icons
         toNewTask = createStyledButton("New Task", "➕");
         toCurrTasks = createStyledButton("Current Tasks", "📋");
         goToTimer = createStyledButton("Timer", "⏲️");
         toReport = createStyledButton("Report", "📊");
+        toQuote = createStyledButton("Daily Quote", "💭");
 
+        // Add all buttons to panel
         buttonPanel.add(toNewTask);
         buttonPanel.add(toCurrTasks);
         buttonPanel.add(goToTimer);
         buttonPanel.add(toReport);
+        buttonPanel.add(toQuote);
 
+        // Add components to main panel
         add(title, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.CENTER);
 
@@ -72,12 +79,12 @@ public class HomeView extends JPanel implements ActionListener {
     }
 
     private void setupActionListeners() {
+        toNewTask.addActionListener(evt -> homeController.switchtoNewTaskView());
+
         toCurrTasks.addActionListener(evt -> {
             viewManagerModel.setState("Task Entered View");
             viewManagerModel.firePropertyChanged();
         });
-
-        toNewTask.addActionListener(evt -> homeController.switchtoNewTaskView());
 
         goToTimer.addActionListener(evt -> {
             viewManagerModel.setState("local timer");
@@ -86,6 +93,11 @@ public class HomeView extends JPanel implements ActionListener {
 
         toReport.addActionListener(evt -> {
             viewManagerModel.setState("report");
+            viewManagerModel.firePropertyChanged();
+        });
+
+        toQuote.addActionListener(evt -> {
+            viewManagerModel.setState("quote");
             viewManagerModel.firePropertyChanged();
         });
     }
@@ -117,6 +129,7 @@ public class HomeView extends JPanel implements ActionListener {
 
         @Override
         protected void paintBorder(Graphics g) {
+            // No border painting
         }
 
         @Override

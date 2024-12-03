@@ -6,8 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import data_access.InMemoryUserDataAccessObject;
-import data_access.InMemoryTaskData;
+import data_access.*;
 import entity.CommonUserFactory;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
@@ -18,6 +17,9 @@ import interface_adapter.add_task.TaskEnteredViewModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.get_quote.QuoteController;
+import interface_adapter.get_quote.QuotePresenter;
+import interface_adapter.get_quote.QuoteViewModel;
 import interface_adapter.home.HomeController;
 import interface_adapter.home.HomePresenter;
 import interface_adapter.home.HomeState;
@@ -37,6 +39,9 @@ import use_case.enter_task.EnterTaskInputBoundary;
 import use_case.enter_task.EnterTaskInteractor;
 import use_case.enter_task.EnterTaskOutputBoundary;
 //import use_case.enter_task.InMemoryTaskData;
+import use_case.get_quote.QuoteInputBoundary;
+import use_case.get_quote.QuoteInteractor;
+import use_case.get_quote.QuoteOutputBoundary;
 import use_case.home.HomeInputBoundary;
 import use_case.home.HomeInteractor;
 import use_case.home.HomeOutputBoundary;
@@ -56,8 +61,6 @@ import interface_adapter.local_timer.LocalTimerViewModel;
 import use_case.local_timer.LocalTimerInteractor;
 import entity.LocalTimerFactory;
 import use_case.local_timer.LocalTimerDataAccessInterface;
-import data_access.InMemoryLocalTimerDataAccess;
-import data_access.InMemoryReportDataAccess;
 import entity.CommonReportFactory;
 import interface_adapter.report.ReportController;
 import interface_adapter.report.ReportPresenter;
@@ -107,6 +110,10 @@ public class AppBuilder {
     private ReportController reportController;
     private final InMemoryLocalTimerDataAccess timerData = new InMemoryLocalTimerDataAccess();
     private final InMemoryReportDataAccess reportDataAccess;
+    private QuoteViewModel quoteViewModel;
+    private ZenQuotesDataAccessObject quoteDataAccessObject;
+    private QuoteView quoteView;
+
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -255,6 +262,7 @@ public class AppBuilder {
         return this;
     }
 
+
     /**
      * Adds the Timer View to the application.
      * @return this builder
@@ -262,23 +270,51 @@ public class AppBuilder {
     public AppBuilder addTimerView() {
         final LocalTimerViewModel timerViewModel = new LocalTimerViewModel();
         final LocalTimerPresenter timerPresenter = new LocalTimerPresenter(timerViewModel);
-        
+
         final LocalTimerInteractor timerInteractor = new LocalTimerInteractor(
                 timerPresenter,
                 new LocalTimerFactory(),
                 timerData
         );
-        
+
         final LocalTimerController timerController = new LocalTimerController(timerInteractor);
         final LocalTimerView timerView = new LocalTimerView(timerViewModel, timerController, viewManagerModel);
         cardPanel.add(timerView, timerView.getViewName());
-        
+
+        return this;
+    }
+
+
+    public AppBuilder addQuoteView() {
+        quoteViewModel = new QuoteViewModel("quote");
+        quoteDataAccessObject = new ZenQuotesDataAccessObject();
+
+        QuoteOutputBoundary quotePresenter = new QuotePresenter(quoteViewModel, viewManagerModel);
+        QuoteInputBoundary quoteInteractor = new QuoteInteractor(quoteDataAccessObject, quotePresenter);
+        QuoteController quoteController = new QuoteController(quoteInteractor);
+
+        quoteView = new QuoteView(quoteViewModel, quoteController, viewManagerModel);
+        cardPanel.add(quoteView, quoteView.getViewName());
+
+        return this;
+    }
+
+    public AppBuilder addQuoteUseCase() {
+        if (quoteDataAccessObject == null) {
+            quoteDataAccessObject = new ZenQuotesDataAccessObject();
+        }
+
+        QuoteOutputBoundary quoteOutputBoundary = new QuotePresenter(quoteViewModel, viewManagerModel);
+        QuoteInputBoundary quoteInteractor = new QuoteInteractor(quoteDataAccessObject, quoteOutputBoundary);
+        QuoteController quoteController = new QuoteController(quoteInteractor);
+        quoteView.setQuoteController(quoteController);
+
         return this;
     }
 
     /**
      * Adds the Report View to the application.
-     * @return this builder
+     * @return this builder.
      */
     public AppBuilder addReportView() {
         reportViewModel = new ReportViewModel();
@@ -289,7 +325,7 @@ public class AppBuilder {
 
     /**
      * Adds the Report Use Case to the application.
-     * @return this builder
+     * @return this builder.
      */
     public AppBuilder addReportUseCase() {
         ReportOutputBoundary reportOutputBoundary = new ReportPresenter(viewManagerModel, reportViewModel);
@@ -302,6 +338,12 @@ public class AppBuilder {
         reportView.setReportController(reportController);
         return this;
     }
+
+    /**
+     * Adds the Quote Use case to the application.
+     * @return this builder.
+     */
+
 
     /**
      * Creates the JFrame for the application and initially sets the SignupView to be displayed.
