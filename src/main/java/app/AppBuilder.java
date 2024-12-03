@@ -9,6 +9,7 @@ import javax.swing.WindowConstants;
 import data_access.*;
 import entity.CommonUserFactory;
 import entity.UserFactory;
+import entity.LocalTimer;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.add_task.EnterTaskController;
 import interface_adapter.add_task.EnterTaskPresenter;
@@ -273,7 +274,7 @@ public class AppBuilder {
 
         final LocalTimerInteractor timerInteractor = new LocalTimerInteractor(
                 timerPresenter,
-                new LocalTimerFactory(),
+                new LocalTimer(),
                 timerData
         );
 

@@ -58,4 +58,28 @@ class EnterTaskInteractorTest {
         EnterTaskInteractor interactor = new EnterTaskInteractor(taskRepo, successPresenter);
         interactor.addTask(inputData);
     }
+    @Test
+    void testEnterTaskFail() {
+        EnterTaskInputData inputData = new EnterTaskInputData("Example Task", "Creating an example task.", 0);
+        EnterTaskDataInterface taskRepo = new InMemoryTaskData();
+
+        Task task = new Task(0, "Example Task", "Creating an example task.");
+        taskRepo.addTask(task);
+
+        EnterTaskOutputBoundary successPresenter = new EnterTaskOutputBoundary() {
+            @Override
+            public boolean prepareTaskAddedView(EnterTaskOutputData addTaskData) {
+                fail("Use case success is unexpected.");
+                return false;
+            }
+
+            @Override
+            public void prepareTaskNotAddedView(String error) {
+                assertEquals(task.getTaskTime(), taskRepo.getTaskTime("Example Task"));
+            }
+        };
+        EnterTaskInteractor interactor = new EnterTaskInteractor(taskRepo, successPresenter);
+        interactor.addTask(inputData);
+    }
+
 }

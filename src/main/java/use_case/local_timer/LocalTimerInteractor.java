@@ -1,5 +1,6 @@
 package use_case.local_timer;
 
+import entity.LocalTimer;
 import entity.TimerFactory;
 import entity.TimerInterface;
 import view.LocalTimerView;
@@ -23,10 +24,10 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
      * @param timerDataAccess for accessing timer data
      */
     public LocalTimerInteractor(LocalTimerOutputBoundary timerPresenter,
-                                TimerFactory timerFactory,
+                                LocalTimer localTimer,
                                 LocalTimerDataAccessInterface timerDataAccess) {
         this.timerPresenter = timerPresenter;
-        this.timer = timerFactory.create();
+        this.timer = localTimer;
         this.timerDataAccess = timerDataAccess;
     }
 
@@ -113,7 +114,6 @@ public class LocalTimerInteractor implements LocalTimerInputBoundary {
                     long endTimeNanos = System.nanoTime();
                     long duration = timer.getElapsedTime();
                     timerDataAccess.saveSession(startTimeNanos, endTimeNanos, duration);
-                    
                     LocalTimerOutputData outputData = new LocalTimerOutputData(
                         true,
                         LocalTimerViewModel.TIMER_SAVED,

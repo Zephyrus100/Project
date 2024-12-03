@@ -30,18 +30,15 @@ class ReportInteractorTest {
         InMemoryLocalTimerDataAccess localTimerRepo = new InMemoryLocalTimerDataAccess();
         localTimerRepo.saveSession(1000,2000,1000);
         ReportDataAccessInterface reportRepo = new InMemoryReportDataAccess(taskRepo, localTimerRepo);
+        CommonReport report = new CommonReport(tasks, timers);
 
         ReportOutputBoundary successPresenter = new ReportOutputBoundary() {
             @Override
             public void prepareSuccessView(ReportOutputData reportOutputData) {
-                assertEquals(2, reportOutputData.getTotalTaskCount());
-                assertEquals(3,reportOutputData.getTotalTaskTime());
-                assertEquals(0, reportOutputData.getTotalTimerSessionTime());
-            }
-
-            @Override
-            public void prepareFailView(String error) {
-                fail("Use case failure is unexpected");
+                assertEquals(report.getTotalTaskCount(), reportOutputData.getTotalTaskCount());
+                assertEquals(report.getTotalTaskTime(),reportOutputData.getTotalTaskTime());
+                assertEquals(report.getTimerSessions(), inputData.getTimerSessions());
+                assertEquals(report.getTasks(), inputData.getTasks());
             }
         };
         ReportInteractor interactor = new ReportInteractor(successPresenter, reportRepo, new CommonReportFactory());
