@@ -74,22 +74,22 @@ If a user decides to pause or cancel a task, it will be marked as unsuccessful.
 An unsuccessful task can either be restarted or deleted.
 Conversely, successfully completed tasks will be labeled as successful and recorded in the user’s profile,
 which maintains a comprehensive history of both completed and uncompleted (paused and cancelled) tasks.
-Users will also have the ability to view their completed and uncompleted tasks,
-allowing them to correct any errors if necessary.
+Users also have a daily quote button to give them inspiration
+before starting to work or study
 
 ## Installation Instructions
 
 1. Ensure you have the 22nd edition of Java installed on your device.
-2. Clone or download the app from the [repository](https://github.com/Zephyrus100/Project).
+2. Clone or download the app from the [repository](https://github.com/Zephyrus100/Project).(or you can copy this link. https://github.com/Zephyrus100/Project)
 3. Then Run the [Main file](src/main/java/app/Main.java)
 4. The various functions can be accessed by the buttons on the home page.
 
 ## Usage Guide
 
 1. The 'Enter Task' button allows new tasks to be created by setting its time, name and description.
-2. The 'Current Tasks' button will allow you to see all previously created tasks.
-3. The 'Timer' button will allow you to use the timer with start, pause, resume, stop and reset functions.
-4. The 'Report' button allows you to see previous tasks and see how long you've been focused.
+2. The 'Timer' button will allow you to use the timer with start, pause, resume, stop and reset functions.
+3. The 'Report' button allows you to see previous tasks and see how long you've been focused.
+4. The 'Quote' button will allow you to see the quote of the day to inspire you before you begin.
 
 ## License
 
@@ -98,6 +98,6 @@ This means it is free for public use without restrictions.
 
 ## Feedback
 
-We accept feedback to the emails listed in our GitHub accounts.
+We accept feedback to this [Google Form](https://forms.gle/tvqCKpFEocVDypsK6)  
 Feedback will only be considered if it is constructive and helpful!
 
