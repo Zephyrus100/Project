@@ -1,4 +1,4 @@
-Task Manager and Timer
+Task Buddy: Your Personal Productivity Partner
 ====
 
 ## Contributors
