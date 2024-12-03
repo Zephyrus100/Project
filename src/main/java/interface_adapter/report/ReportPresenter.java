@@ -31,11 +31,4 @@ public class ReportPresenter implements ReportOutputBoundary {
         viewManagerModel.firePropertyChanged();
     }
 
-    @Override
-    public void prepareFailView(String error) {
-        ReportState reportState = reportViewModel.getState();
-        reportState.setError(error);
-        reportViewModel.setState(reportState);
-        reportViewModel.firePropertyChanged();
-    }
 }

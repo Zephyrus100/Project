@@ -19,32 +19,28 @@ public class ReportInteractor implements ReportInputBoundary {
 
     @Override
     public void execute(ReportInputData reportInputData) {
-        try {
-            ArrayList<Task> tasks = reportDataAccessObject.getTasks();
-            ArrayList<TimerSession> timerSessions = reportDataAccessObject.getTimerSessions();
-            double totalTimerSessionTime = reportDataAccessObject.getTotalTimerSessionTime();
+        ArrayList<Task> tasks = reportDataAccessObject.getTasks();
+        ArrayList<TimerSession> timerSessions = reportDataAccessObject.getTimerSessions();
+        double totalTimerSessionTime = reportDataAccessObject.getTotalTimerSessionTime();
             
-            System.out.println("Debug - Report Generation:");
-            System.out.println("Number of timer sessions: " + timerSessions.size());
-            System.out.println("Raw timer total (ns): " + totalTimerSessionTime);
+        System.out.println("Debug - Report Generation:");
+        System.out.println("Number of timer sessions: " + timerSessions.size());
+        System.out.println("Raw timer total (ns): " + totalTimerSessionTime);
             
-            ReportInterface report = reportFactory.create(tasks, timerSessions);
+        ReportInterface report = reportFactory.create(tasks, timerSessions);
+
+        long focusTime = report.getFocusTimeByTimer();
+        System.out.println("Converted focus time (minutes): " + focusTime);
             
-            long focusTime = report.getFocusTimeByTimer();
-            System.out.println("Converted focus time (minutes): " + focusTime);
+        ReportOutputData reportOutputData = new ReportOutputData(
+            report.getTotalTaskTime(),
+            focusTime,
+            report.getTotalTaskCount(),
+            tasks,
+            timerSessions
+        );
             
-            ReportOutputData reportOutputData = new ReportOutputData(
-                report.getTotalTaskTime(),
-                focusTime,
-                report.getTotalTaskCount(),
-                tasks,
-                timerSessions
-            );
-            
-            reportPresenter.prepareSuccessView(reportOutputData);
-            
-        } catch (Exception e) {
-            reportPresenter.prepareFailView("Failed to generate report: " + e.getMessage());
-        }
+        reportPresenter.prepareSuccessView(reportOutputData);
+
     }
 }
